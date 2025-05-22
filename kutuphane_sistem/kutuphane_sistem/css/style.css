@@ -1,0 +1,287 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Nunito", serif;
+    margin: 0;
+}
+
+#menu {
+    height: 80px;
+    background-color: azure;
+    padding: 0 20px;
+}
+
+#logo {
+    font-size: 30px;
+    line-height: 80px;
+    color: darkblue;
+    float: left;
+}
+
+nav {
+    float: right;
+    line-height: 80px;
+}
+
+nav a {
+    text-decoration: none;
+    margin-right: 25px;
+    color: darkblue;
+}
+
+nav a:hover {
+    border-bottom: 2px solid darkblue;
+}
+
+.ikon {
+    margin-right: 10px;
+    font-size: 16px;
+}
+
+#anasayfa {
+    height: 600px;
+    background-image: url("../img/libraries.jpg");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+#black {
+    height: 600px;
+    background-color: black;
+    opacity: 0.5;
+}
+
+#icerik {
+    position: absolute;
+    top: 50%;
+    left: 40%;
+    transform: translate(-50%, -50%);
+    color: aliceblue;
+    font-size: 20px;
+}
+
+#login-options {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+}
+
+#login-container {
+    text-align: center;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#login-container h2 {
+    margin-bottom: 20px;
+    color: darkblue;
+}
+
+#login-container button {
+    display: block;
+    width: 200px;
+    padding: 10px;
+    margin: 10px auto;
+    border: none;
+    background-color: darkblue;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+#login-container button:hover {
+    background-color: blue;
+}
+#admin-login {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+}
+
+#admin-container {
+    text-align: center;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 300px;
+}
+
+#admin-container h2 {
+    margin-bottom: 20px;
+    color: darkblue;
+}
+
+#admin-container label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: #555;
+}
+
+#admin-container input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+#admin-container button {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    background-color: darkblue;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+#admin-container button:hover {
+    background-color: blue;
+}
+/* Ortak Giriş Stilleri */
+#login-options, #admin-login, #member-login, #staff-login {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+}
+
+#login-container, #admin-container, #member-container, #staff-container {
+    text-align: center;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 300px;
+}
+
+#login-container h2, #admin-container h2, #member-container h2, #staff-container h2 {
+    margin-bottom: 20px;
+    color: darkblue;
+}
+
+#login-container button, #admin-container button, #member-container button, #staff-container button {
+    display: block;
+    width: 200px;
+    padding: 10px;
+    margin: 10px auto;
+    border: none;
+    background-color: darkblue;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+#login-container button:hover, #admin-container button:hover, #member-container button:hover, #staff-container button:hover {
+    background-color: blue;
+}
+
+#admin-container input, #member-container input, #staff-container input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+#admin-container label, #member-container label, #staff-container label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: #555;
+}
+/* Geri Dön Butonu Stili */
+.back-button {
+    display: block;
+    width: 200px;
+    padding: 10px;
+    margin: 20px auto 0;
+    border: none;
+    background-color: gray;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.back-button:hover {
+    background-color: darkgray;
+}
+/* Üye Paneli Stili */
+#member-dashboard {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f9f9f9;
+}
+
+#dashboard-container {
+    width: 600px;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+#dashboard-container h2 {
+    margin-bottom: 20px;
+    color: darkblue;
+}
+
+.info-section {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.info-section h3 {
+    color: darkred;
+    margin-bottom: 10px;
+}
+
+.info-section p, .info-section ul {
+    font-size: 16px;
+    color: #333;
+    margin: 5px 0;
+}
+
+.info-section ul {
+    list-style-type: disc;
+    padding-left: 20px;
+}
+
+.logout-button {
+    display: block;
+    width: 200px;
+    padding: 10px;
+    margin: 20px auto 0;
+    border: none;
+    background-color: crimson;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.logout-button:hover {
+    background-color: darkred;
+}
+

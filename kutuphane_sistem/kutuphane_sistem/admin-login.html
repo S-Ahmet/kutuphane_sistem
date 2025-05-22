@@ -1,0 +1,294 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Yönetici Paneli</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f0f2f5;
+        }
+        .panel {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .section {
+            margin-bottom: 30px;
+        }
+        input, select {
+            padding: 8px;
+            margin: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            padding: 8px 16px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #f7f7f7;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 600px;
+            background: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            z-index: 1000;
+            padding: 20px;
+            display: none;
+        }
+        .modal-header {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .modal-close {
+            float: right;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        /* Eklenen Çıkış Butonu Stilleri */
+        button.logout {
+            float: right;
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 12px;
+            cursor: pointer;
+        }
+        button.logout:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="panel">
+        <h2>Yönetici Paneli</h2>
+        
+        <!-- Çıkış Butonu -->
+        <button class="logout" onclick="logout()">Çıkış</button>
+
+        <div class="section">
+            <h3>Personel İzin İşlemleri</h3>
+            <select id="staffDropdown">
+                <option value="">Personel Seçin</option>
+            </select>
+            <input type="date" id="leaveStart" placeholder="Başlangıç Tarihi">
+            <input type="date" id="leaveEnd" placeholder="Bitiş Tarihi">
+            <button onclick="addLeave()">İzin Ekle</button>
+            <button onclick="showModalLeaves()">İzinli Personeller</button>
+        </div>
+
+        <div class="section">
+            <h3>Üye Ceza İşlemleri</h3>
+            <select id="memberDropdown">
+                <option value="">Üye Seçin</option>
+            </select>
+            <input type="text" id="penaltyReason" placeholder="Ceza Nedeni">
+            <input type="number" id="penaltyDays" placeholder="Ceza Süresi (Gün)">
+            <button onclick="addPenalty()">Ceza Ekle</button>
+            <button onclick="showModalPenalties()">Cezalı Üyeler</button>
+        </div>
+    </div>
+
+    <div id="leavesModal" class="modal">
+        <span class="modal-close" onclick="closeModal('leavesModal')">&times;</span>
+        <div class="modal-header">İzinli Personeller</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Ad Soyad</th>
+                    <th>Başlangıç Tarihi</th>
+                    <th>Bitiş Tarihi</th>
+                </tr>
+            </thead>
+            <tbody id="leavesTableBody"></tbody>
+        </table>
+    </div>
+
+    <div id="penaltiesModal" class="modal">
+        <span class="modal-close" onclick="closeModal('penaltiesModal')">&times;</span>
+        <div class="modal-header">Cezalı Üyeler</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Ad Soyad</th>
+                    <th>Ceza Nedeni</th>
+                    <th>Bitiş Tarihi</th>
+                </tr>
+            </thead>
+            <tbody id="penaltiesTableBody"></tbody>
+        </table>
+    </div>
+
+    <script>
+        function loadStaff() {
+            fetch('get_staff.php')
+                .then(response => response.json())
+                .then(data => {
+                    const dropdown = document.getElementById('staffDropdown');
+                    data.forEach(staff => {
+                        const option = document.createElement('option');
+                        option.value = staff.id;
+                        option.textContent = `${staff.ad} ${staff.soyad}`;
+                        dropdown.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Personel bilgileri yüklenemedi:', error));
+        }
+
+        function loadMembers() {
+            fetch('get_members.php')
+                .then(response => response.json())
+                .then(data => {
+                    const dropdown = document.getElementById('memberDropdown');
+                    data.forEach(member => {
+                        const option = document.createElement('option');
+                        option.value = member.id;
+                        option.textContent = `${member.ad} ${member.soyad}`;
+                        dropdown.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Üye bilgileri yüklenemedi:', error));
+        }
+
+        function addLeave() {
+            const personelID = document.getElementById('staffDropdown').value;
+            const leaveStart = document.getElementById('leaveStart').value;
+            const leaveEnd = document.getElementById('leaveEnd').value;
+
+            if (!personelID || !leaveStart || !leaveEnd) {
+                alert("Lütfen tüm alanları doldurun.");
+                return;
+            }
+
+            fetch('add_leave.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `personelID=${personelID}&leaveStart=${leaveStart}&leaveEnd=${leaveEnd}`
+            })
+            .then(response => response.text())
+            .then(result => alert(result))
+            .catch(error => alert("İzin eklenirken bir hata oluştu: " + error));
+        }
+
+        function addPenalty() {
+            const uyeID = document.getElementById('memberDropdown').value;
+            const tur = document.getElementById('penaltyReason').value;
+            const gun = document.getElementById('penaltyDays').value;
+
+            if (!uyeID || !tur || !gun) {
+                alert("Lütfen tüm alanları doldurun.");
+                return;
+            }
+
+            fetch('add_penalty.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `uyeID=${uyeID}&tur=${tur}&gun=${gun}`
+            })
+            .then(response => response.text())
+            .then(result => alert(result))
+            .catch(error => alert("Ceza eklenirken bir hata oluştu: " + error));
+        }
+
+        function loadLeaves() {
+            fetch('get_leaves.php')
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById('leavesTableBody');
+                    tableBody.innerHTML = '';
+                    data.forEach(leave => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${leave.ad} ${leave.soyad}</td>
+                            <td>${leave.izinBaslangicTarihi}</td>
+                            <td>${leave.izinBitisTarihi}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => alert('İzinli personeller yüklenirken bir hata oluştu: ' + error));
+        }
+
+        function loadPenalties() {
+            fetch('get_penalties.php')
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById('penaltiesTableBody');
+                    tableBody.innerHTML = '';
+                    data.forEach(penalty => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${penalty.ad} ${penalty.soyad}</td>
+                            <td>${penalty.tur}</td>
+                            <td>${penalty.bitisTarihi}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => alert('Cezalı üyeler yüklenirken bir hata oluştu: ' + error));
+        }
+
+        function showModalLeaves() {
+            loadLeaves();
+            showModal('leavesModal');
+        }
+
+        function showModalPenalties() {
+            loadPenalties();
+            showModal('penaltiesModal');
+        }
+
+        function showModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function logout() {
+            window.location.href = 'index.html'; // Kullanıcıyı giriş sayfasına yönlendirir
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadStaff();
+            loadMembers();
+        });
+    </script>
+</body>
+</html>

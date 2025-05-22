@@ -1,0 +1,143 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Üye Paneli</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f2f5;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .panel {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button.green {
+            background: green;
+        }
+        button.red {
+            background: red;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        .logout {
+            float: right;
+            background: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="panel">
+            <h2>Kitap İşlemleri</h2>
+            <button onclick="loadBooks()">Kitap Listesi</button>
+            <button onclick="loadBorrowedBooks()">Ödünç Aldığım Kitaplar</button>
+            <button onclick="loadBreaks()">Mola Al</button>
+            <button class="logout" onclick="logout()">Çıkış</button>
+        </div>
+
+        <div id="contentPanel" class="panel">
+           
+        </div>
+    </div>
+
+    <script>
+        function loadBooks() {
+            fetch('kitaplar.php?action=list')
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('contentPanel').innerHTML = html;
+                });
+        }
+
+        function borrowBook(bookId) {
+            fetch(`kitaplar.php?action=borrow&id=${bookId}`)
+                .then(response => response.text())
+                .then(message => {
+                    alert(message);
+                    loadBorrowedBooks(); 
+                });
+        }
+
+        function loadBorrowedBooks() {
+            fetch('kitaplar.php?action=borrowed')
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('contentPanel').innerHTML = html;
+                });
+        }
+
+        function returnBook(bookId) {
+            fetch(`kitaplar.php?action=return&id=${bookId}`)
+                .then(response => response.text())
+                .then(message => {
+                    alert(message); 
+                    loadBorrowedBooks(); 
+                })
+                .catch(error => {
+                    console.error('Hata:', error);
+                    alert("Bir hata oluştu. Lütfen tekrar deneyin.");
+                });
+        }
+
+        function loadBreaks() {
+            fetch('mola.php?action=list')
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('contentPanel').innerHTML = html;
+                });
+        }
+
+        function takeBreak(breakId) {
+            fetch(`mola.php?action=take&id=${breakId}`)
+                .then(response => response.text())
+                .then(message => {
+                    alert(message); 
+                    loadBreaks(); 
+                })
+                .catch(error => {
+                    console.error('Hata:', error);
+                    alert("Bir hata oluştu. Lütfen tekrar deneyin.");
+                });
+        }
+
+        function logout() {
+            window.location.href = 'index.html'; 
+        }
+    </script>
+</body>
+</html>
